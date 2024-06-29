@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 5px;
+  }
+</style>
+
+<body>
+  <meta charset="UTF-8">
+  <h2>XMLHttpRequest</h2>
+
+  <button type="button" onclick="loadDoc()">Listar Estados</button>
+  <br><br>
+  <table id="lista"></table>
+
+  <form>
+    <label>ID</label>
+    <input type="text" id="idEstado" />
+    <label>Nome</label>
+    <input type="text" id="nomeEstado">
+    <button type="button" onclick="criarEstado()">Criar</button>
+    <button type="button" onclick="alterarEstado()">Alterar</button>
+  </form>
+
+
+
+  <script>
+    function criarEstado() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          var retorno = JSON.parse(this.responseText)
+          alert("sucesso");
+          loadDoc();
+        }
+      };
+      xhttp.open("POST", "/estado", true);
+      xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      var novoEstado = { id: null, nome: this.document.getElementById("nomeEstado").value };
+
+      xhttp.send(JSON.stringify(novoEstado));
+    }
+
+    function alterarEstado() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          var retorno = JSON.parse(this.responseText)
+          alert("sucesso");
+          loadDoc();
+        }
+      };
+      xhttp.open("PUT", "/estado/" + this.document.getElementById("idEstado").value, true);
+      xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      var novoEstado = { id: this.document.getElementById("idEstado").value, nome: this.document.getElementById("nomeEstado").value };
+
+      xhttp.send(JSON.stringify(novoEstado));
+    }
+
+    function loadDoc() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          var objCatalogo = JSON.parse(this.responseText)
+          myFunction(objCatalogo);
+        }
+      };
+      xhttp.open("GET", "/estados", true);
+      xhttp.send();
+    }
+
+    function excluir(id) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) { 
+          alert(this.responseText);
+          loadDoc();
+        }
+      };
+      xhttp.open("DELETE", "/estado/" + id, true);
+      xhttp.send();
+    }
+
+    function myFunction(objJson) {
+      var i;
+      console.log(objJson.catalogo);
+      var table = "<tr><th>id</th><th>Nome</th><th>Excluir</th></tr>";
+      console.log(objJson[0]);
+      for (var estado of objJson) {
+        table += "<tr><td>" +
+          estado.id +
+          "</td><td>" +
+          estado.nome +
+          "</td><td>" +
+          "<button type='button' onclick='excluir(" + estado.id + ")''>excluir</button>" +
+          "</td></tr>";
+      }
+      document.getElementById("lista").innerHTML = table;
+    }
+  </script>
+
+</body>
+
+</html>

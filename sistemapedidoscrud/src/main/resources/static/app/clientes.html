@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Listagem de clientes</title>
+</head>
+
+<body>
+    <h1>Sistema de Pedidos</h1>
+    <div>
+        <p>Listagem de Clientes</p>
+        <form>
+            <label>Id</label>
+            <input type="text" id="tx_id" disabled="disabled" readonly="readonly" />
+            <br>
+            <label> Nome: </label>
+            <input type="text" id="tx_nome_razao_social" />
+            <br>
+            <label> Cpf: </label>
+            <input type="text" id="tx_cpf" />
+            <br>
+            <label> Cnpj: </label>
+            <input type="text" id="tx_cnpj" />
+            <br>
+            <label> Telefone: </label>
+            <input type="text" id="tx_telefone" />
+            <br>
+            <label> Endereço: </label>
+            <input type="text" id="tx_endereco" />
+            <br>
+            <label> Bairro: </label>
+            <input type="text" id="tx_bairro" />
+            <br>
+            <label> Cep: </label>
+            <input type="text" id="tx_cep" />
+            <br>
+            <label> Email: </label>
+            <input type="text" id="tx_email" />
+            <br>
+            <label> Id Município: </label>
+            <input type="text" id="tx_id_municipio" />
+            <br>
+            <label> Informações: </label>
+            <input type="text" id="tx_informacoes" />
+            <br>
+            <label> Ativo: </label>
+            <input type="checkbox" id="bo_ativo" />
+            <br>
+            <button type="button" onclick="criar()">Criar</button>
+            <button type="button" onclick="alterar()">Alterar</button>
+            <button type="button" onclick="carregar()">Listar</button>
+            <button type="button" onclick="limpar()">Limpar</button>
+        </form>
+        <table border="1" id="listagem"></table>
+    </div>
+</body>
+
+<script>
+
+    function limpar() {
+        document.getElementById("tx_id").value = "";
+        document.getElementById("tx_nome_razao_social").value = "";
+        document.getElementById("tx_cpf").value = "";
+        document.getElementById("tx_cnpj").value = "";
+        document.getElementById("tx_telefone").value = "";
+        document.getElementById("tx_endereco").value = "";
+        document.getElementById("tx_bairro").value = "";
+        document.getElementById("tx_cep").value = "";
+        document.getElementById("tx_email").value = "";
+        document.getElementById("bo_ativo").checked = "false";
+        document.getElementById("tx_informacoes").value = "";
+        document.getElementById("tx_id_municipio").value = "";
+    }
+
+    function alterar() {
+        //console.log("Alterar Cliente!!!");
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                alert("Cliente alterado com sucesso!")
+                carregar();
+            }
+        }
+        xhttp.open("PUT", "/cliente/" + document.getElementById("tx_id").value);
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send(JSON.stringify({
+            id: document.getElementById("tx_id").value,
+            nomeRazaoSocial: document.getElementById("tx_nome_razao_social").value,
+            cpf: document.getElementById("tx_cpf").value,
+            cnpj: document.getElementById("tx_cnpj").value,
+            telefone: document.getElementById("tx_telefone").value,
+            endereco: document.getElementById("tx_endereco").value,
+            bairro: document.getElementById("tx_bairro").value,
+            cep: document.getElementById("tx_cep").value,
+            email: document.getElementById("tx_email").value,
+            ativo: document.getElementById("bo_ativo").checked,
+            informacoes: document.getElementById("tx_informacoes").value,
+            municipio: {
+                id: document.getElementById("tx_id_municipio").value,
+                nome: null,
+                entrega: null,
+                estado: {
+                    id: null,
+                    nome: null
+                }
+            }
+        }));
+    }
+
+    function excluir(id_cliente) {
+        //console.log("Excluir Cliente!!!");
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                alert("Cliente excluído com sucesso!")
+                carregar();
+            }
+        }
+        xhttp.open("DELETE", "/cliente/" + id_cliente);
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send();
+    }
+
+    function criar() {
+        //console.log("Criar novo Cliente!!!");
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                alert("Cliente criado com sucesso!")
+                carregar();
+            }
+        }
+        xhttp.open("POST", "/cliente");
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send(JSON.stringify({
+            id: null,
+            nomeRazaoSocial: document.getElementById("tx_nome_razao_social").value,
+            cpf: document.getElementById("tx_cpf").value,
+            cnpj: document.getElementById("tx_cnpj").value,
+            telefone: document.getElementById("tx_telefone").value,
+            endereco: document.getElementById("tx_endereco").value,
+            bairro: document.getElementById("tx_bairro").value,
+            cep: document.getElementById("tx_cep").value,
+            email: document.getElementById("tx_email").value,
+            ativo: document.getElementById("bo_ativo").checked,
+            informacoes: document.getElementById("tx_informacoes").value,
+            municipio: {
+                id: document.getElementById("tx_id_municipio").value,
+                nome: null,
+                entrega: null,
+                estado: {
+                    id: null,
+                    nome: null
+                }
+            }
+        }));
+    }
+
+    function preencher(id_cliente, nomeRazaoSocial_cliente, cpf_cliente, cnpj_cliente, telefone_cliente, endereco_cliente, bairro_cliente, cep_cliente, email_cliente, ativo_cliente, informacoes_cliente, id_municipio_cliente) {
+        document.getElementById("tx_id").value = id_cliente;
+        document.getElementById("tx_nome_razao_social").value = nomeRazaoSocial_cliente;
+        document.getElementById("tx_cpf").value = cpf_cliente;
+        document.getElementById("tx_cnpj").value = cnpj_cliente;
+        document.getElementById("tx_telefone").value = telefone_cliente;
+        document.getElementById("tx_endereco").value = endereco_cliente;
+        document.getElementById("tx_bairro").value = bairro_cliente;
+        document.getElementById("tx_cep").value = cep_cliente;
+        document.getElementById("tx_email").value = email_cliente;
+        document.getElementById("bo_ativo").checked = ativo_cliente;
+        document.getElementById("tx_informacoes").value = informacoes_cliente;
+        document.getElementById("tx_id_municipio").value = id_municipio_cliente;
+    }
+
+    function carregar() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var dados = JSON.parse(this.responseText);
+                var conteudo = "<tr> <th>ID</th> <th>Nome/Razão Social</th> <th>CPF</th> <th>CNPJ</th> <th>Telefone</th> <th>Endereço</th> <th>Bairro</th> <th>CEP</th> <th>Email</th> <th>Ativo</th> <th>Informações</th> <th>Município</th> <th>Ações</th> </tr>";
+                for (var cliente of dados) {
+                    conteudo += "<tr> <td>" + cliente.id + " </td>" +
+                        "<td>" + cliente.nomeRazaoSocial + "</td>" +
+                        "<td>" + cliente.cpf + "</td>" +
+                        "<td>" + cliente.cnpj + "</td>" +
+                        "<td>" + cliente.telefone + "</td>" +
+                        "<td>" + cliente.endereco + "</td>" +
+                        "<td>" + cliente.bairro + "</td>" +
+                        "<td>" + cliente.cep + "</td>" +
+                        "<td>" + cliente.email + "</td>" +
+                        "<td>" + cliente.ativo + "</td>" +
+                        "<td>" + cliente.informacoes + "</td>" +
+                        "<td>" + cliente.municipio.id + "</td>";
+                    conteudo += "<td> <button type='button' onclick=\"preencher('" + cliente.id + "', '" +
+                        cliente.nomeRazaoSocial + "', '" + cliente.cpf + "', '" + cliente.cnpj + "', '" +
+                        cliente.telefone + "', '" + cliente.endereco + "', '" + cliente.bairro + "', '" +
+                        cliente.cep + "', '" + cliente.email + "', " + cliente.ativo + ", '" + cliente.informacoes +
+                        "', '" + cliente.municipio.id + "')\">Alterar</button> ";
+                    conteudo += "<button type='button' onclick='excluir(" + cliente.id + ")'>Excluir</button></td></tr>";
+
+                }
+                document.getElementById("listagem").innerHTML = conteudo;
+                limpar();
+                console.log(this.responseText);
+                console.log(dados);
+            }
+        };
+        xhttp.open("GET", "/clientes");
+        xhttp.send();
+    }
+</script>
+
+</html>

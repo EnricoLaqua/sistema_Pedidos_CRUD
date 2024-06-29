@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Listagem de produtos</title>
+</head>
+
+<body>
+    <h1>Sistema de Pedidos</h1>
+    <div>
+        <p>Listagem de Produtos</p>
+        <form>
+            <label>Id</label>
+            <input type="text" id="tx_id" disabled="disabled" readonly="readonly"/>
+            <br>
+            <label> Produto: </label>
+            <input type="text" id="tx_descricao" />
+            <br>
+            <label> Quantidade: </label>
+            <input type="number" id="dbl_quantidade_estoque" />
+            <br>
+            <label> Preço: </label>
+            <input type="text" id="nu_preco_unidade_atual" />
+            <br>
+            <label> Ativo: </label>
+            <input type="checkbox" id="bo_ativo" />
+            <br>
+            <button type="button" onclick="criar()">Criar</button>
+            <button type="button" onclick="alterar()">Alterar</button>
+            <button type="button" onclick="carregar()">Listar</button>
+            <button type="button" onclick="limpar()">Limpar</button>
+        </form>
+        <table border="1" id="listagem"></table>
+    </div>
+
+    <script>
+        function limpar() {
+            document.getElementById("tx_id").value = "";
+            document.getElementById("tx_descricao").value = "";
+            document.getElementById("dbl_quantidade_estoque").value = "";
+            document.getElementById("nu_preco_unidade_atual").value = "";
+            document.getElementById("bo_ativo").checked = false;
+        }
+
+        function alterar() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert("Produto alterado com sucesso!");
+                    carregar();
+                }
+            };
+            xhttp.open("PUT", "/produto/" + document.getElementById("tx_id").value);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.send(JSON.stringify({
+                id: document.getElementById("tx_id").value,
+                descricao: document.getElementById("tx_descricao").value,
+                quantidadeEstoque: document.getElementById("dbl_quantidade_estoque").value,
+                precoUnidadeAtual: document.getElementById("nu_preco_unidade_atual").value,
+                ativo: document.getElementById("bo_ativo").checked
+            }));
+        }
+
+        function excluir(id_produto) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert("Produto excluído com sucesso!");
+                    carregar();
+                }
+            };
+            xhttp.open("DELETE", "/produto/" + id_produto);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.send();
+        }
+
+        function criar() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert("Produto criado com sucesso!");
+                    carregar();
+                }
+            };
+            xhttp.open("POST", "/produto");
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.send(JSON.stringify({
+                id: null,
+                descricao: document.getElementById("tx_descricao").value,
+                quantidadeEstoque: document.getElementById("dbl_quantidade_estoque").value,
+                precoUnidadeAtual: document.getElementById("nu_preco_unidade_atual").value,
+                ativo: document.getElementById("bo_ativo").checked
+            }));
+        }
+
+        function preencher(id_produto, descricao_produto, quantidadeEstoque_produto, precoUnidadeAtual_produto, ativo_produto) {
+            document.getElementById("tx_id").value = id_produto;
+            document.getElementById("tx_descricao").value = descricao_produto;
+            document.getElementById("dbl_quantidade_estoque").value = quantidadeEstoque_produto;
+            document.getElementById("nu_preco_unidade_atual").value = precoUnidadeAtual_produto;
+            document.getElementById("bo_ativo").checked = ativo_produto;
+        }
+
+        function carregar() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var dados = JSON.parse(this.responseText);
+                    var conteudo = "<tr> <th>ID</th> <th>Descrição</th> <th>Quantidade</th> <th>Preço</th> <th>Ativo</th> <th>Ações</th> </tr>";
+                    for (var produto of dados) {
+                        conteudo += "<tr> <td>" + produto.id + " </td> <td>" + produto.descricao + "</td> <td>" + produto.quantidadeEstoque + "</td> <td>" + produto.precoUnidadeAtual + "</td> <td>" + produto.ativo + " </td> ";
+                        conteudo += "<td> <button type='button' onclick=\"preencher('" + produto.id + "','" + produto.descricao + "', '" + produto.quantidadeEstoque + "', '" + produto.precoUnidadeAtual + "', '" + produto.ativo + "')\">Alterar</button> ";
+                        conteudo += "<button type='button' onclick='excluir(" + produto.id + ")'>Excluir</button></td></tr>";
+                    }
+                    document.getElementById("listagem").innerHTML = conteudo;
+                    limpar();
+                    console.log(this.responseText);
+                    console.log(dados);
+                }
+            };
+            xhttp.open("GET", "/produtos");
+            xhttp.send();
+        }
+    </script>
+</body>
+
+</html>
