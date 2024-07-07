@@ -109,7 +109,7 @@
                     var dados = JSON.parse(this.responseText);
                     var conteudo = "<tr> <th>ID</th> <th>Descrição</th> <th>Quantidade</th> <th>Preço</th> <th>Ativo</th> <th>Ações</th> </tr>";
                     for (var produto of dados) {
-                        conteudo += "<tr> <td>" + produto.id + " </td> <td>" + produto.descricao + "</td> <td>" + produto.quantidadeEstoque + "</td> <td>" + produto.precoUnidadeAtual + "</td> <td>" + (produto.ativo? "Sim" : "Não")+ " </td> ";
+                        conteudo += "<tr> <td>" + produto.id + " </td> <td>" + produto.descricao + "</td> <td>" + produto.quantidadeEstoque + "</td> <td>" + produto.precoUnidadeAtual + "</td> <td>" + produto.ativo + " </td> ";
                         conteudo += "<td> <button type='button' onclick=\"preencher('" + produto.id + "','" + produto.descricao + "', '" + produto.quantidadeEstoque + "', '" + produto.precoUnidadeAtual + "', '" + produto.ativo + "')\">Alterar</button> ";
                         conteudo += "<button type='button' onclick='excluir(" + produto.id + ")'>Excluir</button></td></tr>";
                     }
