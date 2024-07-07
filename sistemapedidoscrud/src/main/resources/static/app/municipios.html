@@ -17,11 +17,24 @@
             <label> Nome: </label>
             <input type="text" id="tx_nome" />
             <br>
-            <label> Id Estado: </label>
+            <!-- <label> Id Estado: </label>
             <input type="text" id="tx_id_estado" />
+            <br> -->
+            <label> Estado: </label>
+            <select id="tx_id_estado"></select>
             <br>
-            <label> Entrega: </label>
+            <!-- <label> Entrega: </label>
             <input type="checkbox" id="bo_entrega" />
+            <br> -->
+            <!-- <label> Entrega: </label>
+            <select id="bo_entrega">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+            </select>
+            <br> -->
+            <label> Entrega: </label>
+            <label> Sim </label><input type="radio" name="entrega" id="bo_entrega" value="true"/>
+            <label> Não </label><input type="radio" name="entrega" id="bo_entrega" value="false"/>
             <br>
             <button type="button" onclick="criar()">Criar</button>
             <button type="button" onclick="alterar()">Alterar</button>
@@ -90,8 +103,13 @@
         xhttp.open("POST", "/municipio");
         xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhttp.send(JSON.stringify({
-            id: null, nome: document.getElementById("tx_nome").value, entrega: document.getElementById("bo_entrega").checked,
-            estado: { id: document.getElementById("tx_id_estado").value, nome: "null" }
+            id: null, 
+            nome: document.getElementById("tx_nome").value, 
+            entrega: document.getElementById("bo_entrega").checked,
+            estado: { 
+                id: document.getElementById("tx_id_estado").value, 
+                nome: "null" 
+            }
         }));
     }
 
@@ -130,6 +148,24 @@
         xhttp.open("GET", "/municipios");
         xhttp.send();
     }
+
+    function carregarEstado() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var dados = JSON.parse(this.responseText);
+                console.log(dados);
+                var conteudo = "";
+                for (var estado of dados) {
+                    conteudo += "<option value="+ estado.id + ">"+ estado.nome +"</option>";
+                }
+                document.getElementById("tx_id_estado").innerHTML = conteudo;
+             }
+        };
+        xhttp.open("GET", "/estados");
+        xhttp.send();
+    }
+    carregarEstado();
 </script>
 
 </html>
