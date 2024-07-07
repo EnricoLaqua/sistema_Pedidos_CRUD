@@ -188,7 +188,7 @@
                         "<td>" + cliente.bairro + "</td>" +
                         "<td>" + cliente.cep + "</td>" +
                         "<td>" + cliente.email + "</td>" +
-                        "<td>" + cliente.ativo + "</td>" +
+                        "<td>" + (cliente.ativo? "Sim" : "Não") + "</td>" +
                         "<td>" + cliente.informacoes + "</td>" +
                         "<td>" + cliente.municipio.id + "</td>";
                     conteudo += "<td> <button type='button' onclick=\"preencher('" + cliente.id + "', '" +
